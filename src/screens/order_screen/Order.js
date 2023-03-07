@@ -5,6 +5,8 @@ import { globalFF } from '../../global/globalFF';
 import GradientBtn from '../../components/GradientBtn';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Icons from "react-native-vector-icons/Ionicons";
+import BuySellComponent from '../components/BuySellComponent';
+import LinearGradient from 'react-native-linear-gradient';
 
 const data = [
     {
@@ -58,14 +60,21 @@ const Order = () => {
                 {
                     buyBtn ?
                         <>
-                            <GradientBtn
-                                loginBtnText={'Buy'}
-                                width={'90%'}
-                                height={35}
-                                color={globalColor.text_primary_color}
-                                paddingHorizontal={0}
-                                onPress={() => buyHandler()}
-                            />
+                            <LinearGradient
+                                style={styles.sell_btn_box_style}
+                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
+                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
+                                locations={[0, 0.8]}
+                                // angle={45}
+                                angleCenter={{ x: 0.2, y: 0.2 }}
+                            >
+                                <TouchableOpacity onPress={buyHandler}>
+                                    <Text style={styles.sell_btn_text_style}>Buy</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                            {/* </TouchableOpacity> */}
+
+
                             <TouchableOpacity
                                 onPress={() => sellHandler()}
                                 style={styles.sell_btn_box_style}>
@@ -75,20 +84,25 @@ const Order = () => {
 
                         :
                         <>
+
                             <TouchableOpacity
-                                onPress={() => buyHandler()}
+                                onPress={buyHandler}
                                 style={styles.sell_btn_box_style}>
                                 <Text style={styles.sell_btn_text_style}>Buy</Text>
                             </TouchableOpacity>
-                            <GradientBtn
-                                onPress={() => sellHandler()}
-                                loginBtnText={'Sell'}
-                                width={'90%'}
-                                height={35}
-                                color={globalColor.text_primary_color}
-                                paddingHorizontal={0}
+                            <LinearGradient
+                                style={styles.sell_btn_box_style}
+                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
+                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
+                                locations={[0, 0.8]}
+                                // angle={45}
+                                angleCenter={{ x: 0.2, y: 0.2 }}
+                            >
+                                <TouchableOpacity onPress={sellHandler}>
+                                    <Text style={styles.sell_btn_text_style}>Sell</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
 
-                            />
                         </>
                 }
 
@@ -98,25 +112,7 @@ const Order = () => {
                 initialNumToRender={10}
                 renderItem={({ item, index }) => {
                     return (
-                        <View key={index} style={styles.bottom_currency_top_container}>
-                            <View
-                                style={styles.currency_icon_top_box}  >
-                                <Icons name={'logo-bitcoin'} size={22} color={globalColor.text_primary_color}
-                                />
-                            </View>
-                            <View style={{ marginLeft: 15, width: 80 }}>
-                                <Text style={styles.currency_text_style}>{item.name}</Text>
-                                <Text style={styles.currency_symbol_name_style}>{item.symbol}</Text>
-                            </View>
-                            <Image
-                                source={require('../../image/graph_up.png')}
-                                style={styles.graph_img_style}
-                            />
-                            <View style={{ marginLeft: 25 }}>
-                                <Text style={styles.currency_price_text_style}>$503.12</Text>
-                                <Text style={styles.currency_price_bottom_text}>50 ETH</Text>
-                            </View>
-                        </View>
+                        <BuySellComponent />
                     );
                 }}
             />
@@ -144,64 +140,17 @@ const styles = StyleSheet.create({
     },
     sell_btn_text_style: {
         color: globalColor.text_primary_color,
-        fontFamily: globalFF.montserrat_r,
+        fontFamily: globalFF.montserrate_s_b,
         fontSize: 16,
     },
     sell_btn_box_style: {
-        width: '50%',
-        height: 35,
+        width: '48%',
+        marginHorizontal: 0,
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 1,
         // borderColor: '#fff'
     },
-    bottom_currency_top_container: {
-        height: 50,
-        // backgroundColor: '#ffffff28',
-        width: '100%',
-        flexDirection: 'row',
-        // justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20
 
-    },
-    currency_icon_top_box: {
-        height: 45,
-        width: 45,
-        borderRadius: 5,
-        backgroundColor: '#212125',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    currency_text_style: {
-        fontSize: 16,
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        color: globalColor.text_primary_color
-    },
-    currency_symbol_name_style: {
-        fontSize: 14,
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '400',
-        color: globalColor.text_gray_color,
-        marginTop: 4
-    },
-    currency_price_text_style: {
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        fontSize: 16,
-        color: globalColor.text_primary_color
-    },
-    currency_price_bottom_text: {
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        fontSize: 10,
-        color: globalColor.text_gray_color,
-        marginTop: 4
-    },
-    graph_img_style: {
-        height: 28,
-        width: 65,
-        marginHorizontal: 15
-    }
 })

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -8,7 +8,7 @@ import { globalColor } from '../global/globalcolors';
 const GradientBtn = ({
     loginBtnText, bgColor, bgColor2,
     icon_name, icon_color, icon_size,
-    color, ...rest
+    color, img2, ...rest
 }) => {
     return (
         <TouchableOpacity {...rest} >
@@ -23,7 +23,13 @@ const GradientBtn = ({
                 {icon_name && <Icon name={icon_name} size={icon_size} color={icon_color} style={{ marginRight: 8 }} />}
 
                 <Text style={[styles.txtStyle, { color: color }]}>{loginBtnText}</Text>
-
+                {
+                    img2 &&
+                    <Image
+                        source={require('../image/trust_wi.png')}
+                        style={{ height: 30, width: 30, marginLeft: 10 }}
+                    />
+                }
             </LinearGradient>
         </TouchableOpacity>
     )
@@ -40,7 +46,8 @@ const styles = StyleSheet.create({
         // borderRadius: 5,
         marginVertical: 10,
         flexDirection: 'row',
-        paddingHorizontal: 8
+        paddingHorizontal: 8,
+        // position: 'absolute'
     },
     txtStyle: {
         fontSize: 16,

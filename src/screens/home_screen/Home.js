@@ -1,4 +1,4 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TextInput, KeyboardAvoidingView } from 'react-native'
 import React, { useState } from 'react'
 import { globalColor } from '../../global/globalcolors';
 import { globalFF } from '../../global/globalFF';
@@ -6,6 +6,9 @@ import GradientBtn from '../../components/GradientBtn';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Icons from "react-native-vector-icons/Ionicons";
 import CustomBtn from '../../components/CustomBtn';
+import BuySellComponent from '../components/BuySellComponent';
+import LinearGradient from 'react-native-linear-gradient';
+import { transactiionHaxHandler } from '../util/utils';
 
 const data = [
     {
@@ -41,8 +44,10 @@ const data = [
 ]
 const Home = () => {
     const [buyBtn, setBuyBtn] = useState(true)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [buyCoinText, setbuyCoinText] = useState()
     // const [sellBtn, setSellBtn] = useState(false)
-
+    // console.log(props);
     const buyHandler = () => {
         if (!buyBtn) {
             setBuyBtn(!buyBtn)
@@ -54,6 +59,99 @@ const Home = () => {
             setBuyBtn(!buyBtn)
         }
     }
+
+
+    // buy coin modal view
+    const BuyCoinModal = () => {
+        return (
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.buy_coin_top_container}>
+                    <View style={styles.buy_coin_top1_container}>
+                        <View style={{
+                            flexDirection: 'row',
+                            width: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.03)',
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#b4b4b4',
+                            paddingHorizontal: 10,
+                            height: 40,
+                        }}>
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(!modalVisible)}
+                                style={{
+                                    height: 25,
+                                    width: 25,
+                                    borderRadius: 25,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: '#000000a4',
+                                    position: 'absolute',
+                                    right: -15,
+                                    top: -25
+                                }}
+                            >
+                                <Icons name={'close-outline'} size={20} color={'#fff'} />
+                            </TouchableOpacity>
+
+                            <TextInput
+                                placeholder='No of fxf Tokens'
+                                placeholderTextColor={'#909090'}
+                                value={buyCoinText}
+                                maxLength={10}
+                                onChangeText={setbuyCoinText}
+                                keyboardType={'number-pad'}
+                                style={{
+                                    width: '85%',
+                                    color: '#000',
+
+                                }}
+                            />
+
+                            <Text style={{
+                                color: '#161616',
+                                marginTop: 15,
+                                fontSize: 10,
+                                fontFamily: globalFF.montserrat_r,
+                            }}>{buyCoinText}USDT</Text>
+                        </View>
+                        <Text style={{
+                            fontSize: 10,
+                            fontFamily: globalFF.montserrat_r,
+                            color: '#000',
+                            marginTop: 10,
+                        }}>No. of bonus coins</Text>
+
+                        <View
+                            style={{
+                                width: '100%',
+                                backgroundColor: 'rgba(0,0,0,0.03)',
+                                height: 40,
+                                paddingHorizontal: 10,
+                                marginTop: 5,
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Text style={{ color: '#909090' }}>{buyCoinText}fxf + {buyCoinText * 20 / 100}fxf</Text>
+                        </View>
+                        <GradientBtn
+                            loginBtnText={'Buy Coins'}
+                            onPress={() => setModalVisible(!modalVisible)}
+                        />
+                    </View>
+                </View>
+            </Modal>
+        )
+    }
+
+    // main view 
     return (
         <View style={styles.container}>
             <View style={styles.top_container}>
@@ -63,7 +161,7 @@ const Home = () => {
                 />
                 <View style={styles.address_top_container}>
                     <Text style={styles.address_title_style}>Address</Text>
-                    <Text numberOfLines={1} style={styles.address_text_style} >35bSzXvRKLpHsHM...........f617cV4Sr</Text>
+                    <Text numberOfLines={1} style={styles.address_text_style} >{transactiionHaxHandler('35bSzXvRKLpHsHM...........f617cV4Sr')}</Text>
                 </View>
             </View>
             <Text style={[styles.name_text_style,]}>Hello Jack!</Text>
@@ -73,7 +171,7 @@ const Home = () => {
                 <View style={styles.current_balance_top_container}>
                     <Text style={styles.current_balance_title_style}>Current Balance</Text>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.current_balance_text_style}>$87,730.12</Text>
+                        <Text style={styles.current_balance_text_style}>87,730.12</Text>
                         <Text style={styles.up_percentage_text_style}> <Text style={{ fontSize: 20 }}>↑</Text>10.20%</Text>
                     </View>
                 </View>
@@ -82,8 +180,10 @@ const Home = () => {
                 loginBtnText={'Buy Coins'}
                 color={globalColor.text_primary_color}
                 marginTop={15}
+                onPress={() => setModalVisible(!modalVisible)}
             />
-            <View style={styles.receive_top_box}>
+            <BuyCoinModal />
+            {/* <View style={styles.receive_top_box}>
                 <View>
                     <View style={styles.btn_top_box}>
                         <Icon name={'get-app'} size={22} color={globalColor.text_primary_color} />
@@ -103,20 +203,27 @@ const Home = () => {
                     </View>
                     <Text style={styles.btn_text_style}>Swap</Text>
                 </View>
-            </View>
+            </View> */}
 
             <View style={styles.buy_sell_top_container}>
                 {
                     buyBtn ?
                         <>
-                            <GradientBtn
-                                loginBtnText={'Buy'}
-                                width={'90%'}
-                                height={35}
-                                color={globalColor.text_primary_color}
-                                paddingHorizontal={0}
-                                onPress={() => buyHandler()}
-                            />
+                            <LinearGradient
+                                style={styles.sell_btn_box_style}
+                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
+                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
+                                locations={[0, 0.8]}
+                                // angle={45}
+                                angleCenter={{ x: 0.2, y: 0.2 }}
+                            >
+                                <TouchableOpacity onPress={buyHandler}>
+                                    <Text style={styles.sell_btn_text_style}>Buy</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
+                            {/* </TouchableOpacity> */}
+
+
                             <TouchableOpacity
                                 onPress={() => sellHandler()}
                                 style={styles.sell_btn_box_style}>
@@ -126,20 +233,25 @@ const Home = () => {
 
                         :
                         <>
+
                             <TouchableOpacity
-                                onPress={() => buyHandler()}
+                                onPress={buyHandler}
                                 style={styles.sell_btn_box_style}>
                                 <Text style={styles.sell_btn_text_style}>Buy</Text>
                             </TouchableOpacity>
-                            <GradientBtn
-                                onPress={() => sellHandler()}
-                                loginBtnText={'Sell'}
-                                width={'90%'}
-                                height={35}
-                                color={globalColor.text_primary_color}
-                                paddingHorizontal={0}
+                            <LinearGradient
+                                style={styles.sell_btn_box_style}
+                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
+                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
+                                locations={[0, 0.8]}
+                                // angle={45}
+                                angleCenter={{ x: 0.2, y: 0.2 }}
+                            >
+                                <TouchableOpacity onPress={sellHandler}>
+                                    <Text style={styles.sell_btn_text_style}>Sell</Text>
+                                </TouchableOpacity>
+                            </LinearGradient>
 
-                            />
                         </>
                 }
 
@@ -149,25 +261,7 @@ const Home = () => {
                 initialNumToRender={10}
                 renderItem={({ item, index }) => {
                     return (
-                        <View key={index} style={styles.bottom_currency_top_container}>
-                            <View
-                                style={styles.currency_icon_top_box}  >
-                                <Icons name={'logo-bitcoin'} size={22} color={globalColor.text_primary_color}
-                                />
-                            </View>
-                            <View style={{ marginLeft: 15, width: 80 }}>
-                                <Text style={styles.currency_text_style}>{item.name}</Text>
-                                <Text style={styles.currency_symbol_name_style}>{item.symbol}</Text>
-                            </View>
-                            <Image
-                                source={require('../../image/graph_up.png')}
-                                style={styles.graph_img_style}
-                            />
-                            <View style={{ marginLeft: 25 }}>
-                                <Text style={styles.currency_price_text_style}>$503.12</Text>
-                                <Text style={styles.currency_price_bottom_text}>50 ETH</Text>
-                            </View>
-                        </View>
+                        <BuySellComponent index={index} />
                     );
                 }}
             />
@@ -288,71 +382,39 @@ const styles = StyleSheet.create({
     },
     sell_btn_text_style: {
         color: globalColor.text_primary_color,
-        fontFamily: globalFF.montserrat_r,
+        fontFamily: globalFF.montserrate_s_b,
         fontSize: 16,
     },
     sell_btn_box_style: {
-        width: '50%',
-        height: 35,
+        width: '48%',
+        marginHorizontal: 0,
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
         // borderWidth: 1,
         // borderColor: '#fff'
-    },
-    bottom_currency_top_container: {
-        height: 50,
-        // backgroundColor: '#ffffff28',
-        width: '100%',
-        flexDirection: 'row',
-        // justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 20
-
-    },
-    currency_icon_top_box: {
-        height: 45,
-        width: 45,
-        borderRadius: 5,
-        backgroundColor: '#212125',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    currency_text_style: {
-        fontSize: 16,
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        color: globalColor.text_primary_color
-    },
-    currency_symbol_name_style: {
-        fontSize: 14,
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '400',
-        color: globalColor.text_gray_color,
-        marginTop: 4
-    },
-    currency_price_text_style: {
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        fontSize: 16,
-        color: globalColor.text_primary_color
-    },
-    currency_price_bottom_text: {
-        fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
-        fontSize: 10,
-        color: globalColor.text_gray_color,
-        marginTop: 4
-    },
-    graph_img_style: {
-        height: 28,
-        width: 65,
-        marginHorizontal: 15
     },
     up_percentage_text_style: {
         color: '#2cca04',
         fontWeight: '700',
         paddingLeft: 30,
         marginTop: 15
+    },
+    buy_coin_top_container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)'
+    },
+    buy_coin_top1_container: {
+        backgroundColor: '#fff',
+        width: '85%',
+        height: 220,
+        borderRadius: 10,
+        padding: 20,
+        paddingTop: 30,
+
+
     }
 
 })

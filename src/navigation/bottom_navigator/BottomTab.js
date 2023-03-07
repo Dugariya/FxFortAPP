@@ -3,11 +3,11 @@ import React from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Home from '../../screens/home_screen/Home';
 import Order from '../../screens/order_screen/Order';
-import Reward from '../../screens/reward_screen/Reward';
 import Share from '../../screens/share_screen/Share';
 import Icon from "react-native-vector-icons/Ionicons";
 import Icons from "react-native-vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Transaction from '../../screens/transaction_screen/Transaction';
 
 const Tab = createMaterialBottomTabNavigator();
 // const Tab = createBottomTabNavigator();
@@ -44,9 +44,9 @@ const BottomTab = () => {
                     tabBarColor: '#2424fe6c'
                 }}
             />
-            <Tab.Screen name="Reward" component={Reward}
+            <Tab.Screen name="Reward" component={Transaction}
                 options={{
-                    tabBarIcon: () => <Icon name='gift' size={24} color={'#4143e1'} />,
+                    tabBarIcon: () => <Icon name='list-outline' size={24} color={'#4143e1'} />,
                     tabBarColor: '#2424fe6c'
 
                 }}

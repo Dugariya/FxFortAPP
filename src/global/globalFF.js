@@ -3,6 +3,7 @@ export const globalFF = {
     montserrat_b: 'Montserrat-Black',
     montserrat_bold: 'Montserrat-Bold',
     montserrat_e_b: 'Montserrat-ExtraBold',
+    montserrate_s_b: 'Montserrat-SemiBold',
     poppins_r: 'Poppins-Regular',
     poppins_b: 'Poppins-Black',
     poppins_bold: 'Poppins-Bold',

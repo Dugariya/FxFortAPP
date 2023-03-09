@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     top_text_style: {
-        fontFamily: globalFF.poppins_r,
+        fontFamily: globalFF.poppins_m,
         color: globalColor.text_primary_color,
         fontSize: 16,
         marginBottom: -8

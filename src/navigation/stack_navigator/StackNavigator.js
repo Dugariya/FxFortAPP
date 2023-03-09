@@ -7,19 +7,31 @@ import SignUp from '../../screens/sign_up_screen/SignUp';
 import SignIn from '../../screens/sign_in_screen/SignIn';
 import ConnectWallet from '../../screens/connect_wallets/ConnectWallet';
 import BottomTab from '../bottom_navigator/BottomTab';
-
-
+import { useSelector } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
+
+
 const StackNavigator = () => {
+    const AuthRData = useSelector((state) => state.AuthReducer);
+    // const reducerData = useSelector((state) => state.MMReducer);
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
-            <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
-            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
-            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-            <Stack.Screen name="ConnectWallet" component={ConnectWallet} options={{ headerShown: false }} />
-            <Stack.Screen name="BottomTab" component={BottomTab} options={{ headerShown: false }} />
+            {
+                AuthRData.splashLoading==true ?
+                    <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} />
+                    : AuthRData.isLogin == false ?
+                        <>
+                            <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
+                            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+                            <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+                        </>
+                        :
+                        <>
+                            <Stack.Screen name="ConnectWallet" component={ConnectWallet} options={{ headerShown: false }} />
+                            <Stack.Screen name="BottomTab" component={BottomTab} options={{ headerShown: false }} />
+                        </>
+            }
         </Stack.Navigator>
     )
 }

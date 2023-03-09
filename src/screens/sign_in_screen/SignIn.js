@@ -9,17 +9,32 @@ import { useNavigation } from '@react-navigation/native';
 import CustomGradientText from '../../components/CustomGradientText';
 import CustomBtn from '../../components/CustomBtn';
 import { CustomLinearGBorderBtn } from '../../components/CustomLinearGBorderBtn';
-
+import { useDispatch } from 'react-redux';
+import { IsLoginHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const SignIn = () => {
 
     const navigation = useNavigation();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const AuthDispatch = useDispatch();
 
     const loginHandler = () => {
-        navigation.navigate('ConnectWallet')
+        // AuthDispatch(IsLoginHandler(true));
+        // navigation.navigate('ConnectWallet')
+        storeTokenData();
     }
-
+    const storeTokenData = async () => {
+        // const res = await AsyncStorage.setItem('userToken', value.token)
+        try {
+            const res = await AsyncStorage.setItem('userLogin', 'true')
+            // await AsyncStorage.setItem('@storage_Key', value)
+            console.log(res);
+            AuthDispatch(IsLoginHandler(true));
+        } catch (error) {
+            console.log(error, 'user_token_store....login page');
+        }
+    }
     return (
         <View style={styles.container}>
             <View style={styles.top_container}>
@@ -110,7 +125,7 @@ const styles = StyleSheet.create({
     title_text_style: {
         width: 200,
         fontFamily: globalFF.montserrat_r,
-        fontWeight: '700',
+        fontWeight: '800',
         fontSize: 40,
         lineHeight: 40,
         color: globalColor.text_primary_color,
@@ -151,7 +166,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     create_account_text_style: {
-        fontFamily: globalFF.poppins_r,
+        fontFamily: globalFF.poppins_m,
         color: globalColor.text_gray_color,
         fontSize: 12,
         alignSelf: 'center',

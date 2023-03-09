@@ -45,7 +45,7 @@ const data = [
 const Home = () => {
     const [buyBtn, setBuyBtn] = useState(true)
     const [modalVisible, setModalVisible] = useState(false);
-    const [buyCoinText, setbuyCoinText] = useState()
+    const [buyCoinText, setbuyCoinText] = useState('')
     // const [sellBtn, setSellBtn] = useState(false)
     // console.log(props);
     const buyHandler = () => {
@@ -59,7 +59,6 @@ const Home = () => {
             setBuyBtn(!buyBtn)
         }
     }
-
 
     // buy coin modal view
     const BuyCoinModal = () => {
@@ -105,8 +104,7 @@ const Home = () => {
                                 placeholder='No of fxf Tokens'
                                 placeholderTextColor={'#909090'}
                                 value={buyCoinText}
-                                maxLength={10}
-                                onChangeText={setbuyCoinText}
+                                onChangeText={(e) => setbuyCoinText(e)}
                                 keyboardType={'number-pad'}
                                 style={{
                                     width: '85%',

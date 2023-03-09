@@ -4,15 +4,29 @@ import { globalColor } from '../../global/globalcolors'
 import { globalFF } from '../../global/globalFF'
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { SplashLoadingHandler, IsLoginHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Splash = () => {
     const navigation = useNavigation();
+    const AuthDispatch = useDispatch();
     useEffect(() => {
         setTimeout(() => {
-            navigation.replace('GetStart')
+            AuthDispatch(SplashLoadingHandler(false))
+            getUserToken();
         }, 2000);
     }, [])
 
+    const getUserToken = async () => {
+        try {
+            const res = await AsyncStorage.getItem('userLogin')
+            AuthDispatch(IsLoginHandler(false))
+            console.log(res);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <View style={styles.container}>
             <Image

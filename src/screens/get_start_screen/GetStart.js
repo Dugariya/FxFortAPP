@@ -10,6 +10,10 @@ const GetStart = () => {
 
     const navigation = useNavigation();
 
+    const getStartHandler = () => {
+        navigation.navigate('SignIn')
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.top_container}>
@@ -38,7 +42,7 @@ const GetStart = () => {
                 <GradientBtn
                     loginBtnText={'Get Started'}
                     color={globalColor.text_primary_color}
-                    onPress={() => navigation.navigate('SignUp')}
+                    onPress={getStartHandler}
                 />
             </View>
         </View>
@@ -75,16 +79,16 @@ const styles = StyleSheet.create({
     bottom_text_style: {
         width: 327,
         color: globalColor.text_primary_color,
-        fontFamily: globalFF.montserrat_r,
+        fontFamily: globalFF.montserrate_s_b,
         fontWeight: '600',
         fontSize: 32,
         lineHeight: 36,
 
     },
     bottom_text2_style: {
-        width: 218,
+        width: 240,
         color: globalColor.text_primary_color,
-        fontFamily: globalFF.montserrat_r,
+        fontFamily: globalFF.montserrate_m,
         fontWeight: '500',
         fontSize: 14,
         lineHeight: 21,

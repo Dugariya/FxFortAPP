@@ -7,6 +7,8 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import Icons from "react-native-vector-icons/Ionicons";
 import LinearGradient from 'react-native-linear-gradient';
 import { transactiionHaxHandler } from '../util/utils';
+import SmallGradientBtn from '../home_screen/SmallGradientBtn';
+import SmallNormalBtn from '../home_screen/SmallNormalBtn';
 
 const Transaction = () => {
     const [buyBtn, setBuyBtn] = useState(true)
@@ -28,52 +30,27 @@ const Transaction = () => {
                 {
                     buyBtn ?
                         <>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={buyHandler}>
-                                    <Text style={styles.sell_btn_text_style}>All transactions</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                            {/* </TouchableOpacity> */}
-
-
-                            <TouchableOpacity
+                            <SmallGradientBtn
+                                btn_name={'All transactions'}
+                                onPress={buyHandler}
+                            />
+                            <SmallNormalBtn
+                                btn_name={'Bonus Only'}
                                 onPress={() => sellHandler()}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>Bonus Only</Text>
-                            </TouchableOpacity>
+                            />
                         </>
                         :
                         <>
-                            <TouchableOpacity
-                                onPress={buyHandler}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>All transactions</Text>
-                            </TouchableOpacity>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={sellHandler}>
-                                    <Text style={styles.sell_btn_text_style}>Bonus Only</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                            {/* </TouchableOpacity> */}
-
-
+                            <SmallNormalBtn
+                                btn_name={'All transactions'}
+                                onPress={() => buyHandler()}
+                            />
+                            <SmallGradientBtn
+                                btn_name={'Bonus Only'}
+                                onPress={sellHandler}
+                            />
                         </>
                 }
-
             </View>
 
             {/* // credite code */}

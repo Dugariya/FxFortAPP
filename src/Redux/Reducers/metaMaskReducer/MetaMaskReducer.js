@@ -1,5 +1,5 @@
 const initialState = {
-    metaMaskAddress: null,
+    metaMaskAddress: '',
     chainId: ''
 };
 

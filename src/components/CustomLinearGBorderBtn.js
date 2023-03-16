@@ -6,7 +6,7 @@ import { globalFF } from '../global/globalFF';
 
 export const CustomLinearGBorderBtn = ({ btn_text, ...rest }) => {
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { ...rest }]}>
             <LinearGradient
                 colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
                 start={{ x: 2.5, y: 0 }} end={{ x: 0, y: 0 }}

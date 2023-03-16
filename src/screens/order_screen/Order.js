@@ -7,6 +7,10 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import Icons from "react-native-vector-icons/Ionicons";
 import BuySellComponent from '../components/BuySellComponent';
 import LinearGradient from 'react-native-linear-gradient';
+import SmallGradientBtn from '../home_screen/SmallGradientBtn';
+import SmallNormalBtn from '../home_screen/SmallNormalBtn';
+import CustomBtn from '../../components/CustomBtn';
+import { useNavigation } from '@react-navigation/native';
 
 const data = [
     {
@@ -43,6 +47,7 @@ const data = [
 
 const Order = () => {
     const [buyBtn, setBuyBtn] = useState(true)
+    const navigation = useNavigation();
     const buyHandler = () => {
         if (!buyBtn) {
             setBuyBtn(!buyBtn)
@@ -54,54 +59,43 @@ const Order = () => {
             setBuyBtn(!buyBtn)
         }
     }
+    const createOrderHandler = () => {
+        navigation.navigate('CreateOrder');
+    }
     return (
         <View style={styles.container}>
+            <CustomBtn
+                btnText={'+ Create New Order'}
+                bgColor={globalColor.bg_secondary_color}
+                color={globalColor.text_secondary_color}
+                marginTop={25}
+                onPress={createOrderHandler}
+            />
             <View style={styles.buy_sell_top_container}>
                 {
                     buyBtn ?
                         <>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={buyHandler}>
-                                    <Text style={styles.sell_btn_text_style}>Buy</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                            {/* </TouchableOpacity> */}
-
-
-                            <TouchableOpacity
+                            <SmallGradientBtn
+                                btn_name={'Buy'}
+                                onPress={buyHandler}
+                            />
+                            <SmallNormalBtn
+                                btn_name={'Sell'}
                                 onPress={() => sellHandler()}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>Sell</Text>
-                            </TouchableOpacity>
+                            />
                         </>
 
                         :
                         <>
+                            <SmallNormalBtn
+                                btn_name={'Buy'}
+                                onPress={() => buyHandler()}
+                            />
+                            <SmallGradientBtn
+                                btn_name={'Sell'}
+                                onPress={sellHandler}
+                            />
 
-                            <TouchableOpacity
-                                onPress={buyHandler}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>Buy</Text>
-                            </TouchableOpacity>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={sellHandler}>
-                                    <Text style={styles.sell_btn_text_style}>Sell</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
 
                         </>
                 }
@@ -112,7 +106,7 @@ const Order = () => {
                 initialNumToRender={10}
                 renderItem={({ item, index }) => {
                     return (
-                        <BuySellComponent />
+                        <BuySellComponent index={index} />
                     );
                 }}
             />

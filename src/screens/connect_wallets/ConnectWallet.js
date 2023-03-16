@@ -14,33 +14,35 @@ import BackgroundTimer from 'react-native-background-timer';
 import { useDispatch, useSelector } from 'react-redux'
 import { ChainIdHandler, MetaMaskAddHandler } from '../../Redux/Action/MetaMaskAction/MetaMaskAction'
 // import ethers from 'ethers';
+import { useWalletConnect, withWalletConnect, } from "@walletconnect/react-native-dapp";
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
-const MMSDK = new MetaMaskSDK({
-    openDeeplink: (link) => {
-        Linking.openURL(link); // Use React Native Linking method or your favourite way of opening deeplinks
-    },
-    timer: BackgroundTimer, // To keep the app alive once it goes to background
-    dappMetadata: {
-        name: 'My App', // The name of your application
-        url: 'https://myapp.com', // The url of your website
-    },
-});
-
-const ethereum = MMSDK.getProvider();
+// const MMSDK = new MetaMaskSDK({
+//     openDeeplink: (link) => {
+//         Linking.openURL(link); // Use React Native Linking method or your favourite way of opening deeplinks
+//     },
+//     timer: BackgroundTimer, // To keep the app alive once it goes to background
+//     dappMetadata: {
+//         name: 'My App', // The name of your application
+//         url: 'https://myapp.com', // The url of your website
+//     },
+// });
+// const ethereum = MMSDK.getProvider();
 // const provider = new ethers.providers.Web3Provider(ethereum);
 
 
 
 const ConnectWallet = () => {
-    const navigation = useNavigation();
+    const connector = useWalletConnect(); // valid
 
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
     const [account, setAccount] = useState();
     const [chain, setChain] = useState();
     const [balance, setBalance] = useState();
     const reducerData = useSelector((state) => state.MMReducer);
     const mmDispatch = useDispatch();
-    console.log(reducerData);
+    // console.log(reducerData);
     // useEffect(() => {
     //     mmDispatch(MetaMaskAddHandler('pavan22'));
     // }, [])
@@ -86,9 +88,17 @@ const ConnectWallet = () => {
         // console.log(chainId);
         // mmDispatch(ChainIdHandler(chainId))
         // if (account.length != 0) {
-        navigation.navigate('BottomTab')
+        // navigation.navigate('BottomTab')
         // }
         // getBalance();
+        const res = await connector.connect();
+        if (connector.connected) {
+            dispatch(MetaMaskAddHandler(res.accounts[0]))
+            navigation.navigate('BottomTab')
+        }
+        console.log(res);
+        // const res1 = await connector.killSession();
+        // console.log(res1);
     }
 
     const sendTransaction = async () => {
@@ -112,9 +122,13 @@ const ConnectWallet = () => {
         }
     };
 
+    const trustWalletConnectHandler = () => {
+        navigation.navigate('BottomTab')
+    }
 
     return (
-        <>
+        <View style={styles.top_container_first}>
+
             <View style={styles.container}>
                 <View style={styles.top_container}>
                     <Image
@@ -137,10 +151,9 @@ const ConnectWallet = () => {
                     loginBtnText={'Connect with Trust wallet'}
                     color={globalColor.text_primary_color}
                     marginTop={30}
-                    onPress={sendTransaction}
+                    onPress={trustWalletConnectHandler}
                     img2
                 />
-
 
             </View>
             <View style={styles.bg_img_top_container}>
@@ -151,12 +164,13 @@ const ConnectWallet = () => {
                     <Image
                         source={require('../../image/get_start_shape1.png')}
                         style={styles.shape1_bg_style}
+                    // blurRadius={}
                     />
 
                 </ImageBackground>
 
             </View>
-        </>
+        </View>
 
     )
 }
@@ -166,8 +180,13 @@ export default ConnectWallet
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: globalColor.bg_primary_color,
+        // backgroundColor: globalColor.bg_primary_color,
         paddingHorizontal: 25,
+        zIndex: 1
+    },
+    top_container_first: {
+        flex: 1,
+        backgroundColor: globalColor.bg_primary_color,
     },
     top_container: {
         flexDirection: 'row',
@@ -196,6 +215,7 @@ const styles = StyleSheet.create({
     line_bg_style: {
         width: '100%',
         height: '100%',
+        zIndex: -50
     },
     shape1_bg_style: {
         height: 440,
@@ -204,6 +224,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: -120,
         right: -130,
+        // zIndex: -50
 
     },
     bg_img_top_container: {
@@ -211,6 +232,8 @@ const styles = StyleSheet.create({
         height: '50%',
         width: '100%',
         bottom: 0,
+
+
 
     }
 })

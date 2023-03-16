@@ -5,24 +5,34 @@ import { globalFF } from '../../global/globalFF'
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { SplashLoadingHandler, IsLoginHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
+import { SplashLoadingHandler, IsLoginHandler, PassCodeHandler, UserTockenHandler, UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 
 const Splash = () => {
     const navigation = useNavigation();
     const AuthDispatch = useDispatch();
     useEffect(() => {
+        getUserToken();
         setTimeout(() => {
             AuthDispatch(SplashLoadingHandler(false))
-            getUserToken();
         }, 2000);
     }, [])
 
     const getUserToken = async () => {
         try {
-            const res = await AsyncStorage.getItem('userLogin')
-            AuthDispatch(IsLoginHandler(false))
-            console.log(res);
+            const res = await RNSecureStorage.exists("userToken")
+            const passcode = await RNSecureStorage.exists("passCode")
+            if (res) {
+                const res = await RNSecureStorage.get("userToken")
+                AuthDispatch(UserTokenHandler(res))
+            }
+            if (passcode) {
+                const res = await RNSecureStorage.get("passCode")
+                console.log(res);
+                AuthDispatch(PassCodeHandler(res))
+            }
+
         } catch (error) {
             console.log(error);
         }

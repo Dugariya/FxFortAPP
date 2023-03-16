@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     },
     txtStyle: {
         fontSize: 16,
-        fontFamily: globalFF.poppins_r,
+        fontFamily: globalFF.poppins_m,
         fontWeight: 500,
         alignSelf: 'center',
 

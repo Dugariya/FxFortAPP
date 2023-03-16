@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TextInput, Touchable, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { globalFF } from '../global/globalFF'
 import { globalColor } from '../global/globalcolors';
@@ -12,6 +12,7 @@ const CustomTextInput = ({ top_text, placeholder_text, close, isVisible, ...rest
                 placeholder={placeholder_text}
                 placeholderTextColor={'#868181'}
                 secureTextEntry={isVisible}
+
                 {...rest}
                 style={{
                     paddingLeft: -5,
@@ -22,7 +23,9 @@ const CustomTextInput = ({ top_text, placeholder_text, close, isVisible, ...rest
                 }}
             />
             {close === false &&
-                <Icon name={'close-circle'} size={14} color={globalColor.text_primary_color} style={styles.close_icon_style} />
+                <TouchableOpacity {...rest}>
+                    <Icon name={'close-circle'} size={20} color={globalColor.text_primary_color} style={styles.close_icon_style} />
+                </TouchableOpacity>
             }
         </View>
     )

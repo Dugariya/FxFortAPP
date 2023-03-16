@@ -1,5 +1,5 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, Modal, TextInput, KeyboardAvoidingView } from 'react-native'
-import React, { useState } from 'react'
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, TextInput, KeyboardAvoidingView, Button } from 'react-native'
+import React, { useState, useMemo, memo } from 'react'
 import { globalColor } from '../../global/globalcolors';
 import { globalFF } from '../../global/globalFF';
 import GradientBtn from '../../components/GradientBtn';
@@ -9,6 +9,12 @@ import CustomBtn from '../../components/CustomBtn';
 import BuySellComponent from '../components/BuySellComponent';
 import LinearGradient from 'react-native-linear-gradient';
 import { transactiionHaxHandler } from '../util/utils';
+import { BtnComponents } from '../components/BtnComponents';
+import SmallGradientBtn from './SmallGradientBtn';
+import SmallNormalBtn from './SmallNormalBtn';
+import { useSelector, useDispatch } from 'react-redux';
+import { UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
+import * as Animatable from 'react-native-animatable';
 
 const data = [
     {
@@ -46,6 +52,8 @@ const Home = () => {
     const [buyBtn, setBuyBtn] = useState(true)
     const [modalVisible, setModalVisible] = useState(false);
     const [buyCoinText, setbuyCoinText] = useState('')
+    const walletReducerData = useSelector((state) => state.MMReducer);
+    const AuthDispatch = useDispatch();
     // const [sellBtn, setSellBtn] = useState(false)
     // console.log(props);
     const buyHandler = () => {
@@ -58,97 +66,9 @@ const Home = () => {
         if (buyBtn) {
             setBuyBtn(!buyBtn)
         }
+        AuthDispatch(UserTokenHandler(null))
+
     }
-
-    // buy coin modal view
-    const BuyCoinModal = () => {
-        return (
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <View style={styles.buy_coin_top_container}>
-                    <View style={styles.buy_coin_top1_container}>
-                        <View style={{
-                            flexDirection: 'row',
-                            width: '100%',
-                            backgroundColor: 'rgba(0,0,0,0.03)',
-                            borderBottomWidth: 1,
-                            borderBottomColor: '#b4b4b4',
-                            paddingHorizontal: 10,
-                            height: 40,
-                        }}>
-                            <TouchableOpacity
-                                onPress={() => setModalVisible(!modalVisible)}
-                                style={{
-                                    height: 25,
-                                    width: 25,
-                                    borderRadius: 25,
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: '#000000a4',
-                                    position: 'absolute',
-                                    right: -15,
-                                    top: -25
-                                }}
-                            >
-                                <Icons name={'close-outline'} size={20} color={'#fff'} />
-                            </TouchableOpacity>
-
-                            <TextInput
-                                placeholder='No of fxf Tokens'
-                                placeholderTextColor={'#909090'}
-                                value={buyCoinText}
-                                onChangeText={(e) => setbuyCoinText(e)}
-                                keyboardType={'number-pad'}
-                                style={{
-                                    width: '85%',
-                                    color: '#000',
-
-                                }}
-                            />
-
-                            <Text style={{
-                                color: '#161616',
-                                marginTop: 15,
-                                fontSize: 10,
-                                fontFamily: globalFF.montserrat_r,
-                            }}>{buyCoinText}USDT</Text>
-                        </View>
-                        <Text style={{
-                            fontSize: 10,
-                            fontFamily: globalFF.montserrat_r,
-                            color: '#000',
-                            marginTop: 10,
-                        }}>No. of bonus coins</Text>
-
-                        <View
-                            style={{
-                                width: '100%',
-                                backgroundColor: 'rgba(0,0,0,0.03)',
-                                height: 40,
-                                paddingHorizontal: 10,
-                                marginTop: 5,
-                                justifyContent: 'center'
-                            }}
-                        >
-                            <Text style={{ color: '#909090' }}>{buyCoinText}fxf + {buyCoinText * 20 / 100}fxf</Text>
-                        </View>
-                        <GradientBtn
-                            loginBtnText={'Buy Coins'}
-                            onPress={() => setModalVisible(!modalVisible)}
-                        />
-                    </View>
-                </View>
-            </Modal>
-        )
-    }
-
     // main view 
     return (
         <View style={styles.container}>
@@ -159,7 +79,7 @@ const Home = () => {
                 />
                 <View style={styles.address_top_container}>
                     <Text style={styles.address_title_style}>Address</Text>
-                    <Text numberOfLines={1} style={styles.address_text_style} >{transactiionHaxHandler('35bSzXvRKLpHsHM...........f617cV4Sr')}</Text>
+                    <Text numberOfLines={1} style={styles.address_text_style} >{transactiionHaxHandler(walletReducerData.metaMaskAddress)}</Text>
                 </View>
             </View>
             <Text style={[styles.name_text_style,]}>Hello Jack!</Text>
@@ -180,80 +100,39 @@ const Home = () => {
                 marginTop={15}
                 onPress={() => setModalVisible(!modalVisible)}
             />
-            <BuyCoinModal />
-            {/* <View style={styles.receive_top_box}>
-                <View>
-                    <View style={styles.btn_top_box}>
-                        <Icon name={'get-app'} size={22} color={globalColor.text_primary_color} />
-                    </View>
-                    <Text style={styles.btn_text_style}>Receive</Text>
-                </View>
-                <View>
-                    <View style={styles.btn_top_box}>
-                        <Icon name={'publish'} size={22} color={globalColor.text_primary_color} />
-                    </View>
-                    <Text style={styles.btn_text_style}>Send</Text>
-                </View>
-                <View>
-
-                    <View style={styles.btn_top_box}>
-                        <Icon name={'swap-horiz'} size={22} color={globalColor.text_primary_color} />
-                    </View>
-                    <Text style={styles.btn_text_style}>Swap</Text>
-                </View>
-            </View> */}
-
+            {/* <BuyCoinModal /> */}
             <View style={styles.buy_sell_top_container}>
                 {
                     buyBtn ?
                         <>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={buyHandler}>
-                                    <Text style={styles.sell_btn_text_style}>Buy</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
-                            {/* </TouchableOpacity> */}
-
-
-                            <TouchableOpacity
+                            <SmallGradientBtn
+                                btn_name={'Buy'}
+                                onPress={buyHandler}
+                            />
+                            <SmallNormalBtn
+                                btn_name={'Sell'}
                                 onPress={() => sellHandler()}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>Sell</Text>
-                            </TouchableOpacity>
+                            />
                         </>
 
                         :
                         <>
+                            <SmallNormalBtn
+                                btn_name={'Buy'}
+                                onPress={() => buyHandler()}
+                            />
+                            <SmallGradientBtn
+                                btn_name={'Sell'}
+                                onPress={sellHandler}
+                            />
 
-                            <TouchableOpacity
-                                onPress={buyHandler}
-                                style={styles.sell_btn_box_style}>
-                                <Text style={styles.sell_btn_text_style}>Buy</Text>
-                            </TouchableOpacity>
-                            <LinearGradient
-                                style={styles.sell_btn_box_style}
-                                colors={[globalColor.linear_g_fc, globalColor.linear_g_sc]}
-                                start={{ x: 0.9, y: 0 }} end={{ x: 0, y: 0 }}
-                                locations={[0, 0.8]}
-                                // angle={45}
-                                angleCenter={{ x: 0.2, y: 0.2 }}
-                            >
-                                <TouchableOpacity onPress={sellHandler}>
-                                    <Text style={styles.sell_btn_text_style}>Sell</Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
 
                         </>
                 }
 
             </View>
+
+
             <FlatList
                 data={data}
                 initialNumToRender={10}
@@ -263,11 +142,57 @@ const Home = () => {
                     );
                 }}
             />
+            {/* // buy coin modal view */}
+            {modalVisible &&
+                <View style={[styles.buy_coin_top_container, {
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    alignSelf: 'center'
+                }]}>
+                    <Animatable.View animation={'zoomInUp'} style={styles.buy_coin_top1_container}>
+                        <View style={styles.modal_top_container}>
+                            <TouchableOpacity
+                                onPress={() => setModalVisible(!modalVisible)}
+                                style={styles.close_btn_top_container} >
+                                <Icons name={'close-outline'} size={20} color={'#F02E5D'} />
+                            </TouchableOpacity>
+                            <TextInput
+                                placeholder='No of fxf Tokens'
+                                placeholderTextColor={'#909090'}
+                                value={buyCoinText}
+                                onChangeText={(e) => setbuyCoinText(e)}
+                                keyboardType={'number-pad'}
+                                style={{
+                                    width: '70%',
+                                    color: '#000',
+
+                                    height: 35,
+                                    fontSize: 14,
+                                }}
+                            />
+                            <Text style={styles.text_input_right_text_style}>{buyCoinText} USDT</Text>
+                        </View>
+
+                        <Text style={styles.no_of_bonus_text_style}>No. of bonus coins</Text>
+                        <View style={styles.bottom_text_top_container} >
+                            <Text style={{ color: '#909090' }}>{buyCoinText}fxf + {buyCoinText * 20 / 100}fxf</Text>
+                        </View>
+                        <GradientBtn
+                            loginBtnText={'Buy Coins'}
+                            onPress={() => setModalVisible(!modalVisible)}
+                            height={45}
+                        />
+                    </Animatable.View>
+                </View>
+            }
         </View>
     )
 }
 
-export default Home
+export default memo(Home)
 
 const styles = StyleSheet.create({
     container: {
@@ -406,13 +331,56 @@ const styles = StyleSheet.create({
     },
     buy_coin_top1_container: {
         backgroundColor: '#fff',
-        width: '85%',
+        width: '100%',
         height: 220,
         borderRadius: 10,
         padding: 20,
         paddingTop: 30,
 
 
+    },
+    modal_top_container: {
+        flexDirection: 'row',
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0.03)',
+        borderBottomWidth: 1,
+        borderBottomColor: '#b4b4b4',
+        paddingHorizontal: 10,
+        height: 35,
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    close_btn_top_container: {
+        height: 25,
+        width: 25,
+        borderRadius: 25,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // backgroundColor: '#000000a4',
+        position: 'absolute',
+        right: -15,
+        top: -25
+    },
+    text_input_right_text_style:
+    {
+        color: '#161616',
+        fontSize: 10,
+        fontFamily: globalFF.montserrat_r,
+    },
+    no_of_bonus_text_style:
+    {
+        fontSize: 10,
+        fontFamily: globalFF.montserrat_r,
+        color: '#000',
+        marginTop: 10,
+    },
+    bottom_text_top_container: {
+        width: '100%',
+        backgroundColor: 'rgba(0,0,0,0.03)',
+        height: 35,
+        paddingHorizontal: 10,
+        marginTop: 5,
+        justifyContent: 'center'
     }
 
 })

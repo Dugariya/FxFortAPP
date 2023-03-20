@@ -26,6 +26,8 @@ const SignUp = () => {
     const [emailValidation, setemailVelidation] = useState(true)
     const [passwordValidation, setpasswordValidation] = useState(true)
     const [phoneNumberValidation, setPhoneNumberValidation] = useState(true)
+    const [onlyAlphaBatice, setonlyAlphaBatice] = useState(true)
+    const re = /^[A-Za-z]+$/;
 
     useEffect(() => {
         email.length > 0 ? emailValidateHandler(email) : setemailVelidation(true);
@@ -74,6 +76,7 @@ const SignUp = () => {
             }
 
         } catch (error) {
+            alert(error.message)
             console.error(error, 'signUp...error');
         }
     }
@@ -122,17 +125,31 @@ const SignUp = () => {
                 <Text style={styles.top_text_style}>Fort</Text>
             </View>
             <Text style={styles.title_text_style}>Whats your email!</Text>
-            <ScrollView style={styles.text_input_top_box}>
+            <ScrollView
+                showsHorizontalScrollIndicator={false}
+                style={styles.text_input_top_box}>
                 <CustomTextInput
                     top_text={'Name'}
                     placeholder_text={'Enter Your Name'}
                     value={name}
-                    onChangeText={(e) => setName(e)}
+                    onChangeText={(e) => {
+
+                        if (e === "" || re.test(e)) {
+                            setName(e)
+                            setonlyAlphaBatice(true)
+                        } else {
+                            setonlyAlphaBatice(false)
+                        }
+                    }
+                    }
                     onPress={() => setName('')}
                     close={name.length > 0 ? false : true}
                 />
                 {!nameValidation &&
                     <Animatable.Text animation={'slideInLeft'} style={styles.validate_text_style}>Enter at Least 4 Characters </Animatable.Text>
+                }
+                {!onlyAlphaBatice &&
+                    <Animatable.Text animation={'slideInRight'} style={[styles.validate_text_style, { alignSelf: 'flex-end' }]}>Enter Only Alphabatic </Animatable.Text>
                 }
                 <CustomTextInput
                     top_text={'Email'}

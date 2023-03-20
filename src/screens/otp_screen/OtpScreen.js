@@ -1,4 +1,4 @@
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions } from 'react-native'
 import React, { useRef, useState, useEffect } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { globalColor } from '../../global/globalcolors';
@@ -14,7 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { UserDataHandler, UserTockenHandler, UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import CustomGradientText from '../../components/CustomGradientText';
-
+import { IsWalletConnectedHandler } from '../../Redux/Action/WalletAction/WalletAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const { height, width } = Dimensions.get('screen');
 const OtpScreen = () => {
     const navigation = useNavigation();
     const { params } = useRoute();
@@ -134,7 +136,7 @@ const OtpScreen = () => {
                 const res = await postData(`${_base_url}auth/register`, sendData);
                 console.log(res.data);
                 if (res.status == 201) {
-                    setUserToken(res.data.access_token);
+                    setUserToken(res.data);
                     AuthDispatch(UserDataHandler(res.data));
                     alert('your account has been created successfully')
                     console.log(res.data);
@@ -160,10 +162,17 @@ const OtpScreen = () => {
         }
     }
     const setUserToken = async (id) => {
+        const token = id.access_token;
+        const isWalletConnect = id.isWalletConnected.toString();
         try {
-            const res = await RNSecureStorage.set("userToken", id, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
+            const res = await RNSecureStorage.set("userToken", token, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
             console.log(res);
-            AuthDispatch(UserTokenHandler(id))
+            AuthDispatch(UserTokenHandler(token))
+
+            const isWallet = await AsyncStorage.setItem('isWalletConnect', isWalletConnect);
+            console.log(isWallet);
+            AuthDispatch(IsWalletConnectedHandler(isWallet));
+
         } catch (error) {
             console.log(error);
         }
@@ -329,8 +338,8 @@ const OtpScreen = () => {
                             disabled={seconds1 > 0 || minutes1 > 0}
                             onPress={() => {
                                 ResendOTPHandler('Mobile')
-                                setMinutes1(0)
-                                setSeconds1(2)
+                                setMinutes1(5)
+                                setSeconds1(0)
                             }}
                             style={{ opacity: seconds1 > 0 || minutes1 > 0 ? 0.5 : 1, }}
                         >
@@ -525,7 +534,7 @@ const styles = StyleSheet.create({
         borderRadius: 9,
         borderWidth: 1,
         borderColor: globalColor.bg_secondary_color,
-        width: 40,
+        width: width * .10,
         height: 40,
         color: globalColor.bg_secondary_color,
         textAlign: 'center',

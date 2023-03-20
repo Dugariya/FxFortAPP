@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { SplashLoadingHandler, IsLoginHandler, PassCodeHandler, UserTockenHandler, UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
+import { IsWalletConnectedHandler } from '../../Redux/Action/WalletAction/WalletAction';
 
 const Splash = () => {
     const navigation = useNavigation();
@@ -32,6 +33,10 @@ const Splash = () => {
                 console.log(res);
                 AuthDispatch(PassCodeHandler(res))
             }
+
+            const isWallet = await AsyncStorage.getItem('isWalletConnect',);
+            console.log(isWallet, 'walletis...>');
+            AuthDispatch(IsWalletConnectedHandler(isWallet));
 
         } catch (error) {
             console.log(error);

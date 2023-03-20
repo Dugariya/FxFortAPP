@@ -11,12 +11,13 @@ import CustomBtn from '../../components/CustomBtn';
 import { CustomLinearGBorderBtn } from '../../components/CustomLinearGBorderBtn';
 import { useDispatch, useSelector } from 'react-redux';
 import { IsLoginHandler, UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable';
-import { _base_url } from '../../env';
+// import { _base_url } from '../../env';
 import { postData } from '../../api/axios/AxiosAPI';
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
-
+import { IsWalletConnectedHandler } from '../../Redux/Action/WalletAction/WalletAction';
+const _base_url = 'http://142.93.62.13/';
 const SignIn = () => {
 
     const navigation = useNavigation();
@@ -50,16 +51,18 @@ const SignIn = () => {
     }
 
     const sendData = {
-        "email": "svikrant406@mailinator.com",
-        "password": "Test123!@#",
+        "email": email,
+        "password": password,
     }
     const loginHandler = async () => {
         try {
             if (emailValidateHandler && passwordValidation && email.length > 0 && password.length > 0) {
                 const res = await postData(`${_base_url}auth/login`, sendData)
+
+                // alert(JSON.stringify(res));
                 console.log("Axios response", res.data);
                 if (res.status == 201) {
-                    setUserToken(res.data.access_token);
+                    setUserToken(res.data);
                     // alert('OTP is send to Your Mobile Number OR Email ID')
                     // navigation.navigate('OtpScreen', sendData2)
                 } else {
@@ -77,13 +80,20 @@ const SignIn = () => {
             }
 
         } catch (error) {
+            alert(JSON.stringify(error));
+            // alert(error.message + " " + 'Message...')
             console.error(error, 'signUp...error');
         }
     }
     const setUserToken = async (id) => {
+        const token = id.access_token;
+        const isWalletConnect = id.isWalletConnected.toString();
         try {
-            const res = await RNSecureStorage.set("userToken", id, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
-            AuthDispatch(UserTokenHandler(id))
+            const res = await RNSecureStorage.set("userToken", token, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
+            AuthDispatch(UserTokenHandler(token))
+            const isWallet = await AsyncStorage.setItem('isWalletConnect', isWalletConnect);
+            console.log(isWallet);
+            AuthDispatch(IsWalletConnectedHandler(isWallet));
         } catch (error) {
             console.log(error);
         }
@@ -100,7 +110,9 @@ const SignIn = () => {
                 <Text style={styles.top_text_style}>Fort</Text>
             </View>
             <Text style={styles.title_text_style}>Whats your email!</Text>
-            <ScrollView style={styles.text_input_top_box}>
+            <ScrollView
+                showsHorizontalScrollIndicator={false}
+                style={styles.text_input_top_box}>
 
                 <CustomTextInput
                     top_text={'Email'}

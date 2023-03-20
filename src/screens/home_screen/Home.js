@@ -1,5 +1,5 @@
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, FlatList, TextInput, KeyboardAvoidingView, Button } from 'react-native'
-import React, { useState, useMemo, memo } from 'react'
+import React, { useState, useMemo, memo, useEffect } from 'react'
 import { globalColor } from '../../global/globalcolors';
 import { globalFF } from '../../global/globalFF';
 import GradientBtn from '../../components/GradientBtn';
@@ -15,6 +15,9 @@ import SmallNormalBtn from './SmallNormalBtn';
 import { useSelector, useDispatch } from 'react-redux';
 import { UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
 import * as Animatable from 'react-native-animatable';
+import { useNavigation } from '@react-navigation/native';
+import { getData } from '../../api/axios/AxiosAPI';
+import { _base_url } from '../../env';
 
 const data = [
     {
@@ -49,10 +52,11 @@ const data = [
     }
 ]
 const Home = () => {
+    const navigation = useNavigation();
     const [buyBtn, setBuyBtn] = useState(true)
     const [modalVisible, setModalVisible] = useState(false);
     const [buyCoinText, setbuyCoinText] = useState('')
-    const walletReducerData = useSelector((state) => state.MMReducer);
+    const walletReducerData = useSelector((state) => state.WalletReducer);
     const AuthDispatch = useDispatch();
     // const [sellBtn, setSellBtn] = useState(false)
     // console.log(props);
@@ -66,23 +70,37 @@ const Home = () => {
         if (buyBtn) {
             setBuyBtn(!buyBtn)
         }
-        AuthDispatch(UserTokenHandler(null))
-
+    }
+    const [userData, setUserData] = useState('')
+    const Dispatch = useDispatch();
+    useEffect(() => {
+        fetchUserData();
+    }, [])
+    const fetchUserData = async () => {
+        try {
+            const res = await getData(`${_base_url}users/me`);
+            // console.log(res);
+            setUserData(res)
+        } catch (error) {
+            console.log(error, 'user data fetch error ...>');
+        }
     }
     // main view 
     return (
         <View style={styles.container}>
             <View style={styles.top_container}>
-                <Image
-                    source={require('../../image/avtar.png')}
-                    style={styles.avtar_img_style}
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                    <Image
+                        source={require('../../image/avtar.png')}
+                        style={styles.avtar_img_style}
+                    />
+                </TouchableOpacity>
                 <View style={styles.address_top_container}>
                     <Text style={styles.address_title_style}>Address</Text>
-                    <Text numberOfLines={1} style={styles.address_text_style} >{transactiionHaxHandler(walletReducerData.metaMaskAddress)}</Text>
+                    <Text numberOfLines={1} style={styles.address_text_style} >{transactiionHaxHandler(walletReducerData.walletAddress)}</Text>
                 </View>
             </View>
-            <Text style={[styles.name_text_style,]}>Hello Jack!</Text>
+            <Text style={[styles.name_text_style,]}>Hello {userData?.fullname}</Text>
             <ImageBackground
                 source={require('../../image/home_gradient.png')}
                 style={styles.img_bg_style}            >

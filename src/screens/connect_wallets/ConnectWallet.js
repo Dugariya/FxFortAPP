@@ -1,4 +1,4 @@
-import { Image, ImageBackground, StyleSheet, Text, View, Linking, LogBox } from 'react-native'
+import { Image, ImageBackground, StyleSheet, Text, View, Linking, LogBox, Modal } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { globalColor } from '../../global/globalcolors'
 import { globalFF } from '../../global/globalFF'
@@ -15,6 +15,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { ChainIdHandler, MetaMaskAddHandler } from '../../Redux/Action/MetaMaskAction/MetaMaskAction'
 // import ethers from 'ethers';
 import { useWalletConnect, withWalletConnect, } from "@walletconnect/react-native-dapp";
+import { IsWalletConnectedHandler, WalletAddressHandler } from '../../Redux/Action/WalletAction/WalletAction'
+import { transactiionHaxHandler } from '../util/utils';
+import { postApiData, postData } from '../../api/axios/AxiosAPI'
+import { _base_url } from '../../env';
+import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
+import { UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction'
 
 LogBox.ignoreLogs(['new NativeEventEmitter']);
 // const MMSDK = new MetaMaskSDK({
@@ -40,7 +46,34 @@ const ConnectWallet = () => {
     const [account, setAccount] = useState();
     const [chain, setChain] = useState();
     const [balance, setBalance] = useState();
+    const [modalVisible, setModalVisible] = useState(false);
     const reducerData = useSelector((state) => state.MMReducer);
+    const wallertReducerData = useSelector((state) => state.WalletReducer);
+    // console.log(wallertReducerData);
+
+    // wallet is connect account code
+    useEffect(() => {
+        // const c = connector.session;
+        // checkIsConnectedAll();
+    }, [wallertReducerData.walletAddress])
+    console.log(connector.connected);
+
+    // const checkIsConnectedAll = async () => {
+    //     if (connector.connected && wallertReducerData.walletAddress === '' && wallertReducerData.isWalletConnected == 'false') {
+    //         const res = await connector.accounts
+    //         dispatch(WalletAddressHandler(res[0]))
+    //         setModalVisible(!modalVisible)
+
+    //     } else {
+    //         if (!wallertReducerData.isWalletConnected && wallertReducerData.walletAddress !== '') {
+    //             setModalVisible(!modalVisible)
+    //         }
+    //     }
+    //     // if (!wallertReducerData.isWalletConnected && wallertReducerData.walletAddress !== '') {
+    //     //     setModalVisible(!modalVisible)
+    //     // }
+    // }
+
     const mmDispatch = useDispatch();
     // console.log(reducerData);
     // useEffect(() => {
@@ -65,11 +98,57 @@ const ConnectWallet = () => {
         }
     }
 
+    const authenticateWallet = (address1) => {
+        const address = address1;
+        console.log(address, 'address.....>.>>>');
+        postApiData(`${_base_url}auth/me/wallet-consent/${address}`, {})
+            .then(async (res1) => {
+                console.log(res1.data, 'res1.....>>>>>');
+                try {
+                    const sign = await connector.signPersonalMessage([res1.data.consent, address])
+                    postApiData(`${_base_url}auth/me/connect-wallet/${address}`, {
+                        signature: sign
+                    }).then((res3) => {
+                        // Receive access token & replace current token
+                        // Redirect screen
+                        if (res3.data.access_token) {
+                            setUserToken(res3.data)
+                        } else (
+                            alert(res3.data.message)
+                        )
+                        console.log('res3..', res3);
+                    }).catch(e => {
+                        // Show api response message
+                        alert(e)
+                        console.error('error..res3', e);
+                    })
+                } catch (e) {
+                    // Show error message
+                    alert(e)
+                    console.error('error..res3', e);
+                }
+            }).catch(e => {
+                // Show api response message
+                alert(e)
+                console.error('error..res4', e);
+            })
+        dispatch(WalletAddressHandler(address))
+        console.log('hell');
+    }
+    const setUserToken = async (id) => {
+        const token = id.access_token;
+        console.log('token', token);
+        try {
+            const res = await RNSecureStorage.set("userToken", token, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
+            dispatch(UserTokenHandler(token))
+            navigation.replace('BottomTab')
+        } catch (error) {
+            console.log('user token data set...', error);
+        }
+    }
     // useEffect(() => {
     //     checkMetamask();
     // }, [])
-
-
 
     // const getBalance = async () => {
     //     if (!ethereum.selectedAddress) {
@@ -80,25 +159,24 @@ const ConnectWallet = () => {
     //     console.log(bal);
     // };
     const connectHandler = async () => {
-        // const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        // console.log(accounts);
-        // setAccount(accounts?.[0]);
-        // mmDispatch(MetaMaskAddHandler(accounts?.[0]));
-        // const chainId = await ethereum.request({ method: 'eth_chainId' });
-        // console.log(chainId);
-        // mmDispatch(ChainIdHandler(chainId))
-        // if (account.length != 0) {
-        // navigation.navigate('BottomTab')
-        // }
-        // getBalance();
-        const res = await connector.connect();
-        if (connector.connected) {
-            dispatch(MetaMaskAddHandler(res.accounts[0]))
-            navigation.navigate('BottomTab')
+        console.log('Test....');
+        try {
+            const res = await connector.connect();
+            console.log(res);
+            console.log(typeof (res.accounts[0]));
+            dispatch(WalletAddressHandler(res.accounts[0]))
+            // console.log(res.accounts[0/]);
+            if (res.accounts) {
+                if (!Boolean(wallertReducerData.isWalletConnected)) {
+                    // Open Model to confirm
+                    setModalVisible(!modalVisible)
+                } else {
+                    authenticateWallet(res.accounts[0]);
+                }
+            }
+        } catch (e) {
+            console.error(e);
         }
-        console.log(res);
-        // const res1 = await connector.killSession();
-        // console.log(res1);
     }
 
     const sendTransaction = async () => {
@@ -124,6 +202,19 @@ const ConnectWallet = () => {
 
     const trustWalletConnectHandler = () => {
         navigation.navigate('BottomTab')
+    }
+    const DisConnectHandler = async () => {
+        try {
+            const res1 = await connector.killSession();
+
+            connector.off.killSession();
+            console.log(res1);
+            // const res2 = await connector.
+            // console.log(res2);
+
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -154,6 +245,12 @@ const ConnectWallet = () => {
                     onPress={trustWalletConnectHandler}
                     img2
                 />
+                {/* <GradientBtn
+                    loginBtnText={'Disconnect wallet'}
+                    color={globalColor.text_primary_color}
+                    marginTop={30}
+                    onPress={DisConnectHandler}
+                /> */}
 
             </View>
             <View style={styles.bg_img_top_container}>
@@ -168,7 +265,53 @@ const ConnectWallet = () => {
                     />
 
                 </ImageBackground>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        paddingHorizontal: 25,
+                    }}>
+                        <View style={{
+                            backgroundColor: '#fff',
+                            width: '100%',
+                            borderRadius: 10,
+                            padding: 20,
+                            paddingTop: 30,
+                        }}>
+                            <Text style={{
+                                fontSize: 16,
+                                color: globalColor.text_secondary_color,
+                                alignSelf: 'center',
+                                textAlign: 'center',
+                                fontFamily: globalFF.montserrate_m,
+                            }}>Do You Want Connect the Wallet In Your Account</Text>
+                            <Text style={{
+                                fontSize: 14,
+                                color: globalColor.text_secondary_color,
+                                fontFamily: globalFF.montserrate_m,
+                                marginVertical: 10,
 
+                            }} > Wallet-Address: {transactiionHaxHandler(wallertReducerData.walletAddress)} </Text>
+                            <GradientBtn
+                                loginBtnText={'Connect'}
+                                color={'#fff'}
+                                marginTop={20}
+                                onPress={() => {
+                                    authenticateWallet(wallertReducerData.walletAddress)
+                                    setModalVisible(!modalVisible);
+                                }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </View>
 

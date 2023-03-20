@@ -13,6 +13,8 @@ import OtpScreen from '../../screens/otp_screen/OtpScreen';
 import PasscodeCreate from '../../screens/passcode_create_screen/PasscodeCreate';
 import PasscodeConfirme from '../../screens/passcode_create_screen/PasscodeConfirme';
 import CreateOrder from '../../screens/create_order_screen/CreateOrder';
+import profile from '../../screens/profile/Profile';
+import Profile from '../../screens/profile/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +46,7 @@ const StackNavigator = () => {
                                 <Stack.Screen name="ConnectWallet" component={ConnectWallet} options={{ headerShown: false }} />
                                 <Stack.Screen name="BottomTab" component={BottomTab} options={{ headerShown: false }} />
                                 <Stack.Screen name="CreateOrder" component={CreateOrder} options={{ headerShown: false }} />
+                                <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
                             </>
             }
         </Stack.Navigator>

@@ -17,7 +17,7 @@ const App = () => {
         name: "WalletConnect",
       }}
       redirectUrl={
-        Platform.OS === "web" ? window.location.origin : "yourappscheme://"
+        Platform.OS === "web" ? window.location.origin : "trust://"
       }
       storageOptions={{
         asyncStorage: AsyncStorage,

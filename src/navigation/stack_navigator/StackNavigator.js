@@ -15,6 +15,8 @@ import PasscodeConfirme from '../../screens/passcode_create_screen/PasscodeConfi
 import CreateOrder from '../../screens/create_order_screen/CreateOrder';
 import profile from '../../screens/profile/Profile';
 import Profile from '../../screens/profile/Profile';
+import OrderDetails from '../../screens/order_details/OrderDetails';
+import OrderDetailsConfirmed from '../../screens/order_details/OrderDetailsConfirmed';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +49,8 @@ const StackNavigator = () => {
                                 <Stack.Screen name="BottomTab" component={BottomTab} options={{ headerShown: false }} />
                                 <Stack.Screen name="CreateOrder" component={CreateOrder} options={{ headerShown: false }} />
                                 <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+                                <Stack.Screen name="OrderDetails" component={OrderDetails} options={{ headerShown: false }} />
+                                <Stack.Screen name="OrderDetailsConfirmed" component={OrderDetailsConfirmed} options={{ headerShown: false }} />
                             </>
             }
         </Stack.Navigator>

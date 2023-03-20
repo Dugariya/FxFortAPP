@@ -10,4 +10,5 @@ export const globalFF = {
     poppins_b: 'Poppins-Black',
     poppins_bold: 'Poppins-Bold',
     poppins_e_b: 'Poppins-ExtraBold',
+    poppins_s_b: 'Poppins-SemiBold'
 }

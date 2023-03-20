@@ -101,17 +101,17 @@ const ConnectWallet = () => {
     const authenticateWallet = (address1) => {
         const address = address1;
         console.log(address, 'address.....>.>>>');
-        postApiData(`${_base_url}auth/me/wallet-consent/${address}`, {})
+        postApiData(`${_base_url}auth/me/:address/consent/${address}`, {})
             .then(async (res1) => {
                 console.log(res1.data, 'res1.....>>>>>');
                 try {
                     const sign = await connector.signPersonalMessage([res1.data.consent, address])
-                    postApiData(`${_base_url}auth/me/connect-wallet/${address}`, {
+                    postApiData(`${_base_url}auth/me/:address/connect/${address}`, {
                         signature: sign
                     }).then((res3) => {
                         // Receive access token & replace current token
                         // Redirect screen
-                        if (res3.data.access_token) {
+                        if (res3.data.accessToken) {
                             setUserToken(res3.data)
                         } else (
                             alert(res3.data.message)

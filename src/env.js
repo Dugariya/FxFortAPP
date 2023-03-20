@@ -1,1 +1,1 @@
-export const _base_url = 'http://142.93.62.13/'; 
+export const _base_url = 'https://api-testnet.fxfort.io/'; 

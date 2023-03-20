@@ -13,11 +13,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IsLoginHandler, UserTokenHandler } from '../../Redux/Action/AuthReducerAction/AuthReducerAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable';
-// import { _base_url } from '../../env';
+import { _base_url } from '../../env';
 import { postData } from '../../api/axios/AxiosAPI';
 import RNSecureStorage, { ACCESSIBLE } from 'rn-secure-storage'
 import { IsWalletConnectedHandler } from '../../Redux/Action/WalletAction/WalletAction';
-const _base_url = 'http://142.93.62.13/';
+// const _base_url = 'http://142.93.62.13/';
 const SignIn = () => {
 
     const navigation = useNavigation();
@@ -86,7 +86,7 @@ const SignIn = () => {
         }
     }
     const setUserToken = async (id) => {
-        const token = id.access_token;
+        const token = id.accessToken;
         const isWalletConnect = id.isWalletConnected.toString();
         try {
             const res = await RNSecureStorage.set("userToken", token, { accessible: ACCESSIBLE.WHEN_UNLOCKED })

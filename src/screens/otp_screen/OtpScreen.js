@@ -162,7 +162,7 @@ const OtpScreen = () => {
         }
     }
     const setUserToken = async (id) => {
-        const token = id.access_token;
+        const token = id.accessToken;
         const isWalletConnect = id.isWalletConnected.toString();
         try {
             const res = await RNSecureStorage.set("userToken", token, { accessible: ACCESSIBLE.WHEN_UNLOCKED })
